@@ -15,7 +15,7 @@ The API base URL is defined in the `base.service.ts` file. Before running the pr
 
 ```typescript
 export class BaseService {
-  protected apiUrl = 'http://your-backend-url.com/api';
+  protected apiUrl = 'http://your-LocalHost/api'; //
 }
 
 ```
