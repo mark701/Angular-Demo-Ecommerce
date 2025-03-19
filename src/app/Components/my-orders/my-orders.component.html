@@ -1,0 +1,120 @@
+<!-- invoice-list.component.html -->
+<section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+      <div class="mx-auto max-w-5xl">
+        <div class="gap-4 sm:flex sm:items-center sm:justify-between">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My Invoices</h2>
+  
+          <div class="mt-6 gap-4 space-y-4 sm:mt-0 sm:flex sm:items-center sm:justify-end sm:space-y-0">
+            <div>
+              <select id="order-type" [(ngModel)]="statusFilter" (change)="onFilterChange()" 
+                      class="block w-full min-w-[8rem] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                <option value="">All orders</option>
+                <option value="1">Pre-order</option>
+                <option value="2">In transit</option>
+                <option value="3">Confirmed</option>
+                <option value="4">Cancelled</option>
+              </select>
+            </div>
+  
+            <span class="inline-block text-gray-500 dark:text-gray-400"> from </span>
+  
+            <div>
+              <select id="duration" [(ngModel)]="durationFilter" (change)="onFilterChange()"
+                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                <option value="">All time</option>
+                <option value="week">This week</option>
+                <option value="month">This month</option>
+                <option value="3months">Last 3 months</option>
+                <option value="6months">Last 6 months</option>
+                <option value="year">This year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+  
+        <div class="mt-6 flow-root sm:mt-8">
+          <div class="divide-y divide-gray-200 dark:divide-gray-700">
+            <div *ngFor="let invoice of invoices | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }" 
+            class="flex flex-wrap items-center gap-y-4 py-6">
+         
+         <!-- Invoice Summary -->
+         <dl class="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
+           <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Invoice ID:</dt>
+           <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+             <a (click)="toggleInvoiceDetails(invoice.invoiceHId)" class="hover:underline cursor-pointer">#{{ invoice.invoiceHId }}</a>
+           </dd>
+         </dl>
+       
+         <dl class="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
+           <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Date:</dt>
+           <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+             {{ invoice.createDateAndTime | date }}
+           </dd>
+         </dl>
+       
+         <dl class="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
+           <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Total:</dt>
+           <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+             {{ invoice.totalAmount | currency }}
+           </dd>
+         </dl>
+       
+         <dl class="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
+           <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Status:</dt>
+           <dd [ngClass]="getStatusClass(invoice.status)" 
+               class="me-2 mt-1.5 inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium">
+             {{ getStatusText(invoice.status) }}
+           </dd>
+         </dl>
+       
+         <div class="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
+           <!-- <button *ngIf="invoice.status === 0" type="button" 
+                   class="w-full rounded-lg border border-red-700 px-3 py-2 text-center text-sm font-medium text-red-700 hover:bg-red-700 hover:text-white">
+             Cancel order
+           </button> -->
+           <button (click)="toggleInvoiceDetails(invoice.invoiceHId)" 
+                   class="w-full inline-flex justify-center rounded-lg  border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                   {{ expandedInvoiceId === invoice.invoiceHId ? 'Hide Details' : 'View Details' }}
+           </button>
+         </div>
+       
+         <!-- Invoice Details -->
+         <div *ngIf="expandedInvoiceId === invoice.invoiceHId" class="w-full mt-4 p-4 border rounded-lg bg-gray-100 dark:bg-gray-800">
+           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Invoice Details</h3>
+           <div class="mt-3">
+             <table class="w-full border-collapse border border-gray-300 dark:border-gray-700">
+               <thead>
+                 <tr class="bg-gray-200 dark:bg-gray-700">
+                   <th class="border border-gray-300 px-4 py-2 text-left dark:border-gray-600">Product</th>
+                   <th class="border border-gray-300 px-4 py-2 text-left dark:border-gray-600">Quantity</th>
+                   <th class="border border-gray-300 px-4 py-2 text-left dark:border-gray-600">Unit Price</th>
+                   <th class="border border-gray-300 px-4 py-2 text-left dark:border-gray-600">Total</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr *ngFor="let detail of invoice.invoiceDetails">
+                   <td class="border border-gray-300 px-4 py-2 dark:border-gray-600">{{ detail.productName }}</td>
+                   <td class="border border-gray-300 px-4 py-2 dark:border-gray-600">{{ detail.quantity }}</td>
+                   <td class="border border-gray-300 px-4 py-2 dark:border-gray-600">{{ detail.unitPrice | currency }}</td>
+                   <td class="border border-gray-300 px-4 py-2 dark:border-gray-600">{{ detail.quantity * detail.unitPrice | currency }}</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+         </div>
+       </div>
+       
+          </div>
+        </div>
+  
+        <div class="mt-6 flex items-center justify-center sm:mt-8">
+          <pagination-controls (pageChange)="onPageChange($event)"
+                               previousLabel=""
+                               nextLabel=""
+                               class="pagination">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </section>

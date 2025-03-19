@@ -1,0 +1,22 @@
+/* Smooth fade animation */
+.loader-overlay {
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Dark mode support */
+.dark .loader-overlay {
+  background: rgba(17, 24, 39, 0.95);
+}
+
+/* Animation definitions */
+.fade-in-out {
+  transition: opacity 300ms;
+}
+.fade-in-out-enter-from,
+.fade-in-out-leave-to {
+  opacity: 0;
+}

@@ -1,0 +1,174 @@
+<section class="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 flex items-center justify-center">
+  <div class="container mx-auto px-6">
+
+
+    <!-- If cart is empty, show this message -->
+    <div *ngIf="!cartItems || cartItems.length === 0" class="text-center p-10 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18M9 3v3m6-3v3m-9 0a2 2 0 012-2h6a2 2 0 012 2v4a8 8 0 01-16 0V6z"></path>
+      </svg>
+      <h2 class="text-xl font-semibold text-gray-700 dark:text-white mt-4">Your Cart is Empty</h2>
+      <p class="text-gray-500 dark:text-gray-400 mt-2">Looks like you haven't added anything to your cart yet.</p>
+      <a href="/products" class="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg">
+        Browse Products
+      </a>
+    </div>
+
+
+    <div *ngIf="cartItems && cartItems.length > 0" class="overflow-x-auto shadow-md sm:rounded-lg bg-white dark:bg-gray-800">
+      <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <!-- Table Header -->
+        <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">Product Name</th>
+            <th scope="col" class="px-6 py-3">Product Price</th>
+            <th scope="col" class="px-6 py-3">Quantity</th>
+            <th scope="col" class="px-6 py-3">Total</th>
+            <th scope="col" class="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody>
+          <tr *ngFor="let item of cartItems" class="border-b dark:border-gray-700">
+            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ item.name }}</td>
+            <td class="px-6 py-4">${{ item.price }}</td>
+            <td class="px-6 py-4">
+              <input type="number" 
+              class="w-16 p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-center"
+              [value]="item.quantity" 
+              (change)="updateQuantity(item, $event)" 
+              min="1"
+              [max]="item.stockQuantity"> <!-- Add max binding -->
+            </td>
+            <td class="px-6 py-4">${{ item.price * item.quantity }}</td>
+            <td class="px-6 py-4">
+              <button (click)="removeFromCart(item.id)" class="text-red-600 hover:text-red-700">
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd"
+                    d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm7.7-3.7a1 1 0 0 0-1.4 1.4l2.3 2.3-2.3 2.3a1 1 0 1 0 1.4 1.4l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4-1.4L13.4 12l2.3-2.3a1 1 0 0 0-1.4-1.4L12 10.6 9.7 8.3Z"
+                    clip-rule="evenodd" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+          <tr class="bg-gray-100 dark:bg-gray-700">
+            <td colspan="3" class="px-6 py-4 font-medium text-gray-900 dark:text-white text-right">Total</td>
+            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">${{ totalAmount }}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- <div class="p-4 mt-4 flex items-center space-x-2">
+        <input type="checkbox" id="payOnDelivery" name="payOnDelivery"
+          class="h-5 w-5 text-green-500 focus:ring-green-400" required>
+        <label for="payOnDelivery" class="text-sm text-gray-700 dark:text-gray-300">Cash on delivery</label>
+      </div> -->
+
+      <div (click)="MakeOrder(cartItems)" class="mt-6 text-right">
+        <button id="successButton" 
+          class="mb-5 mr-6 px-8 py-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600">
+          Make Order
+        </button>
+      </div>
+
+
+<!-- Success Modal -->
+<!-- <div *ngIf="showSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+    <div class="text-center">
+      <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Order Placed Successfully!</h3>
+      <p class="text-gray-600 dark:text-gray-300 mb-4">Thank you for your purchase.</p>
+      <button 
+        (click)="closeModal()"
+        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+        Continue
+      </button>
+    </div>
+  </div>
+</div> -->
+
+
+<!-- Success/Failure Modal -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+    <div class="text-center">
+      <div class="w-12 h-12 rounded-full p-2 flex items-center justify-center mx-auto mb-4"
+           [ngClass]="isSuccess ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'">
+        <svg class="w-8 h-8"
+             [ngClass]="isSuccess ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+             fill="currentColor" viewBox="0 0 20 20">
+          <path *ngIf="isSuccess" fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"/>
+          <path *ngIf="!isSuccess" fill-rule="evenodd"
+                d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414z"
+                clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ modalMessage }}</h3>
+      <button (click)="closeModal()"
+              class="px-4 py-2"
+              [ngClass]="isSuccess ? 'bg-blue-500 hover:bg-blue-600' : 'bg-red-500 hover:bg-red-600'"
+              class="text-white rounded-lg transition-colors">
+        Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div #errorModal tabindex="-1" aria-hidden="true" 
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="relative w-full max-w-md p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+    
+    <!-- Close Button -->
+    <button type="button" 
+            (click)="hideErrorModal()"
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" 
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" 
+              clip-rule="evenodd">
+        </path>
+      </svg>
+    </button>
+
+    <!-- Error Icon & Message -->
+    <div class="flex flex-col items-center text-center">
+      <div class="w-16 h-16 mb-4 flex items-center justify-center bg-red-100 rounded-full">
+        <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" 
+                d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zM9 7a1 1 0 012 0v4a1 1 0 01-2 0V7zm1 6a1 1 0 100 2 1 1 0 000-2z" 
+                clip-rule="evenodd">
+          </path>
+        </svg>
+      </div>
+
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        Stock Issue
+      </h3>
+      <p class="text-gray-600 dark:text-gray-300">
+        Exceeds available stock or product is out of stock.
+      </p>
+
+      <!-- Action Button -->
+      <button (click)="hideErrorModal()" 
+              type="button" 
+              class="mt-5 px-5 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+        Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+    </div>
+  </div>
+</section>
