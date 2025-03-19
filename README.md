@@ -5,9 +5,11 @@ This is a demo project built using Angular and Tailwind CSS for the frontend, wh
 ## Setup Instructions  
 
 ### 1. Update API URL  
-The API base URL is defined in the `base.service.ts` file. Before running the project, update the backend URL in this file.  
+You need To run ASP.NET API in the Link Down Below 
 
-- you need to run .Net back-end  [link In github](https://github.com/mark701/BackEnd-NetAPi)  
+The API base URL is defined in the `base.service.ts` file. Before running the project  you Need To  update the backend URL in this file.  
+
+- you need to run .Net back-end API [link In github](https://github.com/mark701/BackEnd-NetAPi)  
 - Open `src/app/services/base.service.ts`  
 - Locate the `apiUrl` variable and update it with your backend URL  
 
