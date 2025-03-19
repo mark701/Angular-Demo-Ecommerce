@@ -1,4 +1,4 @@
-# Angular + Tailwind CSS Demo Project  
+# Angular + Tailwind CSS Demo E-Commerce 
 
 This is a demo project built using Angular and Tailwind CSS for the frontend, which connects to a backend API.  
 
