@@ -1,4 +1,23 @@
-# MyProject
+# Angular + Tailwind CSS Demo Project  
+
+This is a demo project built using Angular and Tailwind CSS for the frontend, which connects to a backend API.  
+
+## Setup Instructions  
+
+### 1. Update API URL  
+The API base URL is defined in the `base.service.ts` file. Before running the project, update the backend URL in this file.  
+
+- you need to run .Net back-end  [link In github](https://github.com/mark701/BackEnd-NetAPi)  
+- Open `src/app/services/base.service.ts`  
+- Locate the `apiUrl` variable and update it with your backend URL  
+
+```typescript
+export class BaseService {
+  protected apiUrl = 'http://your-backend-url.com/api';
+}
+
+```
+
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.6.
 
@@ -7,6 +26,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 To start a local development server, run:
 
 ```bash
+npm install  # Install dependencies  
 ng serve
 ```
 
@@ -19,7 +39,6 @@ Angular CLI includes powerful code scaffolding tools. To generate a new componen
 ```bash
 ng generate component component-name
 ```
-
 For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
 ```bash
