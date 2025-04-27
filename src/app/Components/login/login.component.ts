@@ -27,7 +27,9 @@ export class LoginComponent {
       next: (response) => {
         debugger
         console.log('Login successful!', response);
-        window.location.reload(); // This will reload the entire page
+        this.router.navigate(['/dashboard']); // Adjust route as needed
+
+        // window.location.reload(); // This will reload the entire page
 
       },
       error: (err) => {
